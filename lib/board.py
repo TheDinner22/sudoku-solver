@@ -1,16 +1,22 @@
+# dependencies
 import sys
 
 # whole grid
 class Board:
-    def __init__(self, n=3):
+    def __init__(self, n=3, print_test_grid=False):
         self.n = int(n)
+        self.print_test_grid = print_test_grid
         self.width = n * n
         self.height = self.width # this is to make things more human readable 
         self.grid = []
 
         # generate the grid
-        for i in range(n**4):
-            self.grid.append(i)
+        if print_test_grid:
+            for i in range(n**4):
+                self.grid.append(i)
+        else:
+            for _i in range(n**4):
+                self.grid.append(0)
 
     def pretty_print_grid(self):
         for i in range(1,len(self.grid)+1):
@@ -29,7 +35,7 @@ class Board:
         elif msg_len == 2:
             sys.stdout.write(" ")
 
-    def return_row_of_index(self, cell_index, print_test_grid=False): # WORKING
+    def return_row_of_index(self, cell_index): # WORKING
         # define container for row
         row_as_list = []
 
@@ -61,7 +67,7 @@ class Board:
 
 
         # do the optional, tesing/printing code here
-        if print_test_grid:
+        if self.print_test_grid:
             # NOTE this is test code so i dont care about it being 100% the 
             # best it can be
             # also this depends on the grid having uniqe cell values
@@ -87,11 +93,10 @@ class Board:
                     counter = 0
                     print()
 
-
         #return the list
         return row_as_list   
 
-    def return_col_of_index(self, cell_index, print_test_grid=False): # WORKING
+    def return_col_of_index(self, cell_index): # WORKING
         # define container for col
         col_as_list = []
 
@@ -109,7 +114,7 @@ class Board:
             col_as_list.append(self.grid[next_row_down_index])
 
         # do the optional, tesing/printing code here
-        if print_test_grid:
+        if self.print_test_grid:
             # NOTE this is test code so i dont care about it being 100% the 
             # best it can be
             # also this depends on the grid having uniqe cell values
@@ -139,11 +144,10 @@ class Board:
                     counter = 0
                     print()
 
-
         # return the list
         return col_as_list
         
-    def return_nxn_grid_of_index(self, cell_index, print_test_grid=False):
+    def return_nxn_grid_of_index(self, cell_index):
         # NOTE here I just create and then loop through all of the sub_grids until 
         # I find the one the given index is in 
         # if this turns out to be too slow I will refactor later
@@ -162,7 +166,10 @@ class Board:
             start_i = start_i + self.n if (start_i + self.n) % self.width != 0 else (start_i + self.n) + (self.width * (self.n -1))
 
             # check to see if our index is in the subgrid # we skip this if print_test_grid is True
-            if cell_index in sub_grid and not print_test_grid:
+            if cell_index in sub_grid and not self.print_test_grid:
+                # convert indices in sub_grid to cells is self.grid
+                for i in range(len(sub_grid)):
+                    sub_grid[i] = self.grid[sub_grid[i]]
                 return sub_grid
             elif cell_index in sub_grid:
                 break
@@ -194,22 +201,21 @@ class Board:
                 print()
 
         # return again
+        for i in range(len(sub_grid)):
+            sub_grid[i] = self.grid[sub_grid[i]]
         return sub_grid
 
 
 if __name__ == "__main__":
-    g = Board()#n=2)
+    g = Board(print_test_grid=True)#,n=2)
 
-    #g.return_row_of_index(43,print_test_grid=True)
+    #print(g.return_row_of_index(43))
 
-    #print(g.return_col_of_index(52,print_test_grid=True))
+    #print(g.return_col_of_index(52))
 
     #g.pretty_print_grid()
 
-    print(g.return_nxn_grid_of_index(5,print_test_grid=True))
-
-
-# (x, y, z)
+    print(g.return_nxn_grid_of_index(9))
 
 '''
 ml= [
