@@ -9,6 +9,7 @@ class Board:
         self.width = n * n
         self.height = self.width # this is to make things more human readable 
         self.grid = []
+        self.immutable_indices = [] # TODO make me useful later
 
         # generate the grid
         if print_test_grid:
@@ -22,11 +23,11 @@ class Board:
         for i in range(1,len(self.grid)+1):
             cell = self.grid[i-1]
             sys.stdout.write(str(cell))
-            self.spacer(cell)
+            self._spacer(cell)
             if (i % self.width) == 0:
                 print()
 
-    def spacer(self, msg):
+    def _spacer(self, msg):
         """only works when 4>n>0"""
         msg = str(msg)
         msg_len = len(msg)
@@ -34,6 +35,10 @@ class Board:
             sys.stdout.write("  ")
         elif msg_len == 2:
             sys.stdout.write(" ")
+
+    def update_cell(self, cell_index, value):
+        if not cell_index in self.immutable_indices:
+            self.grid[cell_index] = int(value) # TODO is the 'int' really needed here??
 
     def return_row_of_index(self, cell_index): # WORKING
         # define container for row
@@ -77,15 +82,15 @@ class Board:
                 if self.grid.index(cell) in green_indices:
                     pass
                     sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                    self.spacer(cell)
+                    self._spacer(cell)
                 elif self.grid.index(cell) == col_index:
                     pass
                     sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                    self.spacer(cell)
+                    self._spacer(cell)
                 else:
                     pass
                     sys.stdout.write(str(cell))
-                    self.spacer(cell)
+                    self._spacer(cell)
 
                 counter += 1
 
@@ -130,13 +135,13 @@ class Board:
                 if self.grid.index(cell) in green_indices:
                     if self.grid.index(cell) == col_index:
                         sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                        self.spacer(cell)
+                        self._spacer(cell)
                     else:
                         sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                        self.spacer(cell)
+                        self._spacer(cell)
                 else:
                     sys.stdout.write(str(cell))
-                    self.spacer(cell)
+                    self._spacer(cell)
 
                 counter += 1
 
@@ -186,13 +191,13 @@ class Board:
             if self.grid.index(cell) in green_indices:
                 if self.grid.index(cell) == cell_index:
                     sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                    self.spacer(cell)
+                    self._spacer(cell)
                 else:
                     sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                    self.spacer(cell)
+                    self._spacer(cell)
             else:
                 sys.stdout.write(str(cell))
-                self.spacer(cell)
+                self._spacer(cell)
 
             counter += 1
 
@@ -209,13 +214,13 @@ class Board:
 if __name__ == "__main__":
     g = Board(print_test_grid=True)#,n=2)
 
-    #print(g.return_row_of_index(43))
+    #print(g.return_row_of_index(44))
 
     #print(g.return_col_of_index(52))
 
     #g.pretty_print_grid()
 
-    print(g.return_nxn_grid_of_index(9))
+    #print(g.return_nxn_grid_of_index(9))
 
 '''
 ml= [
