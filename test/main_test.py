@@ -3,8 +3,6 @@
 # set path to root dir
 
 # dependencies
-
-# dependencies
 import os, sys
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # adds project dir to places it looks for the modules

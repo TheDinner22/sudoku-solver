@@ -39,6 +39,8 @@ class Board:
     def update_cell(self, cell_index, value):
         if not cell_index in self.immutable_indices:
             self.grid[cell_index] = int(value) # TODO is the 'int' really needed here??
+        else:
+            print("cannot update immutable cell: ", cell_index)
 
     def return_row_of_index(self, cell_index): # WORKING
         # define container for row
