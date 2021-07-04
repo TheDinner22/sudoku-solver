@@ -8,7 +8,7 @@ sys.path.append(BASE_PATH)
 
 from lib.board import Board
 
-# grid.return_row_of_index() always returns the correct row
+# Board.return_row_of_index() always returns the correct row
 def test1(done):
     # create two different boards to test on
     big_board = Board()
@@ -45,10 +45,10 @@ def test1(done):
             assert outcome == expected_outcome, msg
 
     # if no asserts failed the test is a pass
-    done("grid.return_row_of_index() always returns the correct row")
-unit_tests["grid.return_row_of_index() always returns the correct row"] = test1
+    done("Board.return_row_of_index() always returns the correct row")
+unit_tests["Board.return_row_of_index() always returns the correct row"] = test1
 
-# grid.return_col_of_index() always returns the correct column
+# Board.return_col_of_index() always returns the correct column
 def test2(done):
     # create two different boards to test on
     big_board = Board()
@@ -88,10 +88,10 @@ def test2(done):
             assert outcome == expected_outcome, msg
 
     # if no asserts failed the test is a pass
-    done("grid.return_col_of_index() always returns the correct column")
-unit_tests["grid.return_col_of_index() always returns the correct column"] = test2
+    done("Board.return_col_of_index() always returns the correct column")
+unit_tests["Board.return_col_of_index() always returns the correct column"] = test2
 
-# grid.return_nxn_grid_of_index always returns the correct sub_grid
+# Board.return_nxn_grid_of_index always returns the correct sub_grid
 def test3(done):
     # create two different boards to test on
     big_board = Board()
@@ -139,8 +139,41 @@ def test3(done):
             assert outcome == expected_outcome, msg
 
     # if no asserts failed the test is a pass
-    done("grid.return_nxn_grid_of_index always returns the correct sub_grid")
-unit_tests["grid.return_nxn_grid_of_index always returns the correct sub_grid"] = test3
+    done("Board.return_nxn_grid_of_index always returns the correct sub_grid")
+unit_tests["Board.return_nxn_grid_of_index always returns the correct sub_grid"] = test3
+
+# Board.update_cell should update Board.grid
+def test4(done):
+    why = Board(n=4)
+    board = Board(n=3)
+    little_board = Board(n=2)
+    atom = Board(n=1)
+
+    boards = [why, board, little_board, atom]
+
+    for board in boards:
+        num_of_cells = board.width * board.width
+        random_index = random.randrange(0,num_of_cells)
+        test_value = 314159
+
+        # create the expected output
+        expected_output = []
+        for _i in range(num_of_cells):
+            expected_output.append(0)
+        expected_output[random_index] = test_value
+
+        # get output
+        board.update_cell(random_index,test_value)
+        output = board.grid
+
+        # compare outputs
+        msg = f"Output:\n{output}\ndid not match expected_output:\n{expected_output}\nwhen random_index = {random_index}\nand test_value = {test_value}\nboard.n = {board.n}"
+        assert output == expected_output, msg
+
+    # if the index was updated the test passes
+    done("Board.update_cell should update Board.grid")
+unit_tests["Board.update_cell should update Board.grid"] = test4
+
 
 '''
 # example tests
