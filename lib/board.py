@@ -46,116 +46,26 @@ class Board:
         col_index = cell_index%self.width
         return self.grid[cell_index - col_index : cell_index-col_index + self.width]
 
-    def return_col_of_index(self, cell_index): # WORKING
-        # define container for col
-        col_as_list = []
+    def return_col_of_index(self, cell_index):
+        col_index = cell_index % self.width
+        return self.grid[col_index::self.width]
 
-        # get the number at the highest row AND in the same row 
-        col_index = cell_index
-        while col_index >= self.width:
-            col_index  = col_index - self.width if col_index - self.width > -1 else col_index
-
-        # add the col_index to the list
-        col_as_list.append(self.grid[col_index])
-
-        # add all of the other colums under col_index to a list
-        for x in range(1, self.height):
-            next_row_down_index = col_index + (self.width * x)
-            col_as_list.append(self.grid[next_row_down_index])
-
-        # do the optional, tesing/printing code here
-        if self.print_test_grid:
-            # NOTE this is test code so i dont care about it being 100% the 
-            # best it can be
-            # also this depends on the grid having uniqe cell values
-            counter = 0
-            green_indices = [col_index]
-
-            # add all of the other column index's under col_index to the list
-            for x in range(1, self.height):
-                next_row_down_index = col_index + (self.width * x)
-                green_indices.append(next_row_down_index)
-
-            for cell in self.grid:
-                if self.grid.index(cell) in green_indices:
-                    if self.grid.index(cell) == col_index:
-                        sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                        self._spacer(cell)
-                    else:
-                        sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                        self._spacer(cell)
-                else:
-                    sys.stdout.write(str(cell))
-                    self._spacer(cell)
-
-                counter += 1
-
-                if counter >= self.width:
-                    counter = 0
-                    print()
-
-        # return the list
-        return col_as_list
-        
     def return_nxn_grid_of_index(self, cell_index):
-        # NOTE here I just create and then loop through all of the sub_grids until 
-        # I find the one the given index is in 
-        # if this turns out to be too slow I will refactor later
+        # defin the starting index (top_left corner of sub_grid)
+        x_pos = ((cell_index % self.width) // self.n) * self.n
 
-        # create all of the nxn sub-grids
-        start_i = 0
-        for i in range(self.width):
-            # make sub_grid here
-            sub_grid = []
-            for i in range(self.width):
-                add_num = i % self.n
-                i = i // self.n
-                sub_grid.append((start_i+add_num) + (self.width * i))
+        row_num = (cell_index // self.width)
+        y_pos =  (row_num - (row_num % self.n)) * self.width 
 
-            # update the starting index      ### NOTE pretty proud I got this to work second try 🧠🧠🧠
-            start_i = start_i + self.n if (start_i + self.n) % self.width != 0 else (start_i + self.n) + (self.width * (self.n -1))
+        start_i = x_pos + y_pos 
+        # make sub_grid here
+        sub_grid = []
+        for x in range(self.n):
+            sub_grid += self.grid[(start_i + (x * self.width)):(start_i + (x * self.width))+self.n]
 
-            # check to see if our index is in the subgrid # we skip this if print_test_grid is True
-            if cell_index in sub_grid and not self.print_test_grid:
-                # convert indices in sub_grid to cells is self.grid
-                for i in range(len(sub_grid)):
-                    sub_grid[i] = self.grid[sub_grid[i]]
-                return sub_grid
-            elif cell_index in sub_grid:
-                break
-
-        # print the grid
-        
-        # NOTE this is test code so i dont care about it being 100% the 
-        # best it can be
-        # also this depends on the grid having uniqe cell values
-        counter = 0
-        green_indices = sub_grid
-
-        for cell in self.grid:
-            if self.grid.index(cell) in green_indices:
-                if self.grid.index(cell) == cell_index:
-                    sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                    self._spacer(cell)
-                else:
-                    sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                    self._spacer(cell)
-            else:
-                sys.stdout.write(str(cell))
-                self._spacer(cell)
-
-            counter += 1
-
-            if counter >= self.width:
-                counter = 0
-                print()
-
-        # return again
-        for i in range(len(sub_grid)):
-            sub_grid[i] = self.grid[sub_grid[i]]
+        # return the sub_grid
         return sub_grid
-
-
+        
 if __name__ == "__main__":
     g = Board(print_test_grid=True)#,n=2)
 
