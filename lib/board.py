@@ -5,7 +5,7 @@ import sys
 class Board:
     def __init__(self, n=3, print_test_grid=False):
         self.n = int(n)
-        self.print_test_grid = print_test_grid
+        self.print_test_grid = print_test_grid # TODO remove me
         self.width = n * n
         self.height = self.width # this is to make things more human readable 
         self.grid = []
@@ -42,66 +42,9 @@ class Board:
         else:
             print("cannot update immutable cell: ", cell_index)
 
-    def return_row_of_index(self, cell_index): # WORKING
-        # define container for row
-        row_as_list = []
-
-        # get the number at the highest row AND in the same col
-        col_index = cell_index
-        while col_index >= self.width:
-            col_index  = col_index - self.width if col_index - self.width > -1 else col_index
-        
-        # get how many spaces are to the left and right
-        spaces_to_left = col_index
-        spaces_to_right = (self.width - spaces_to_left) -1
-
-        # get the left and right cells
-
-        # left of:
-        for i in range(0,spaces_to_left):
-            i+=1
-            row_as_list.append(self.grid[cell_index-i])
-        # reverse the list to correct for the fact that I got cells right-to-left
-        row_as_list = row_as_list[::-1]
-
-        # add the cell itself
-        row_as_list.append(self.grid[cell_index])        
-
-        # right of:
-        for i in range(0,spaces_to_right):
-            i +=1
-            row_as_list.append(self.grid[cell_index+i])
-
-
-        # do the optional, tesing/printing code here
-        if self.print_test_grid:
-            # NOTE this is test code so i dont care about it being 100% the 
-            # best it can be
-            # also this depends on the grid having uniqe cell values
-            green_indices = range(cell_index-spaces_to_left,cell_index+spaces_to_right+1)
-            counter = 0
-            for cell in self.grid:
-                if self.grid.index(cell) in green_indices:
-                    pass
-                    sys.stdout.write('\033[92m'+str(cell)+'\033[0m')
-                    self._spacer(cell)
-                elif self.grid.index(cell) == col_index:
-                    pass
-                    sys.stdout.write('\033[91m'+str(cell)+'\033[0m')
-                    self._spacer(cell)
-                else:
-                    pass
-                    sys.stdout.write(str(cell))
-                    self._spacer(cell)
-
-                counter += 1
-
-                if counter >= self.width:
-                    counter = 0
-                    print()
-
-        #return the list
-        return row_as_list   
+    def return_row_of_index(self, cell_index):
+        col_index = cell_index%self.width
+        return self.grid[cell_index - col_index : cell_index-col_index + self.width]
 
     def return_col_of_index(self, cell_index): # WORKING
         # define container for col
