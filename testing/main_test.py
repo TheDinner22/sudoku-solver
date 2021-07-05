@@ -13,8 +13,8 @@ if __name__ == '__main__':
     from unit import unit_tests
     from integration import integration_tests
 else:
-    from test.unit import unit_tests
-    from test.integration import integration_tests
+    from testing.unit import unit_tests
+    from testing.integration import integration_tests
 
 class _App():
     def __init__(self):
