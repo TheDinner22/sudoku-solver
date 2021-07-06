@@ -9,14 +9,16 @@ class Board:
         self.width = n * n
         self.height = self.width # this is to make things more human readable 
         self.grid = []
-        self.immutable_indices = [] # TODO make me useful later
+        self.mutable_indices = []
 
         # generate the grid
         if print_test_grid:
+            self.mutable_indices.append(0)
             for i in range(n**4):
                 self.grid.append(i)
         else:
-            for _i in range(n**4):
+            for i in range(n**4):
+                self.mutable_indices.append(i)
                 self.grid.append(0)
 
     def pretty_print_grid(self):
@@ -36,8 +38,21 @@ class Board:
         elif msg_len == 2:
             sys.stdout.write(" ")
 
+    def update_board(self, board_list):
+        # update the grid
+        if len(board_list) == len(self.grid):
+            self.grid = board_list
+
+            # update self.immuteable indices # NOTE if an element == 0 it is muteable
+            # TODO can this code be made better?
+            self.mutable_indices = []
+            for i in range(len(self.grid)):
+                cell = self.grid[i]
+                if not cell:
+                    self.mutable_indices.append(i)
+            
     def update_cell(self, cell_index, value):
-        if not cell_index in self.immutable_indices:
+        if cell_index in self.mutable_indices:
             self.grid[cell_index] = int(value) # TODO is the 'int' really needed here??
         else:
             print("cannot update immutable cell: ", cell_index)
@@ -73,7 +88,11 @@ if __name__ == "__main__":
 
     #print(g.return_col_of_index(52))
 
-    #g.pretty_print_grid()
+    g.update_board(g.grid)
+
+    g.pretty_print_grid()
+
+    print(g.mutable_indices)
 
     #print(g.return_nxn_grid_of_index(9))
 
