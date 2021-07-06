@@ -174,6 +174,35 @@ def test4(done):
     done("Board.update_cell should update Board.grid")
 unit_tests["Board.update_cell should update Board.grid"] = test4
 
+# Board.update_board should do nothing if passed the wrong list
+def test5(done):
+    why = Board(n=4)
+    board = Board(n=3)
+    little_board = Board(n=2)
+    atom = Board(n=1)
+
+    boards = [why, board, little_board, atom]
+
+    for b in boards:
+        expected_outcome = b.grid
+        expected_outcome2 = b.mutable_indices
+
+        bad_input = ['', '', '', '', 'qewccs', '', '', '', '', '', '', '', '3224', 'afafds', 'ad', ]
+
+        b.update_board(bad_input)
+
+        outcome = b.grid
+        outcome2 = b.mutable_indices
+
+        msg = f'Outcome:\n{outcome} did not match expected outcome:\n{expected_outcome}'
+        assert outcome == expected_outcome, msg
+
+        msg = f'Outcome:\n{outcome2} did not match expected outcome:\n{expected_outcome2}'
+        assert outcome2 == expected_outcome2, msg
+
+    # if the foor loop ends with no assert errors the test is a pass
+    done("Board.update_board should do nothing if passed the wrong list")
+unit_tests["Board.update_board should do nothing if passed the wrong list"] = test5 
 
 '''
 # example tests
