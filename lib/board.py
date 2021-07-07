@@ -81,6 +81,29 @@ class Board:
         # return the sub_grid
         return sub_grid
         
+    def is_index_valid(self, cell_index):
+        # TODO make this tell you which cells are causing the problem and return a bool
+        # get the row, col, and sub_grid for the index
+        row_list = self.return_row_of_index(cell_index)
+        col_list = self.return_col_of_index(cell_index)
+        subgrid_list = self.return_nxn_grid_of_index(cell_index)
+
+        lists = [row_list, col_list, subgrid_list]
+
+        # loop through all of these checking for repeat elements in the lists
+        for l in lists:
+            # remove all 0's
+            l = list(filter((0).__ne__, l))
+
+            set_l = list(set(l))
+
+            if l != set_l:
+                return False
+
+        # return true if for loop runs
+        return True
+
+
 if __name__ == "__main__":
     g = Board(print_test_grid=True)#,n=2)
 
