@@ -204,6 +204,42 @@ def test5(done):
     done("Board.update_board should do nothing if passed the wrong list")
 unit_tests["Board.update_board should do nothing if passed the wrong list"] = test5 
 
+# Board.is_index_valid should return the correct bool
+def test6(done):
+    why = Board(n=4)
+    board = Board(n=3)
+    little_board = Board(n=2)
+    atom = Board(n=1)
+
+    boards = [why, board, little_board, atom]
+
+    for b in boards:
+        ### Board.grid is all 0's right now so any index should return true
+        expected_outcome = True
+        i = random.randrange(0,len(b.grid))
+
+        outcome = b.is_index_valid(i)
+
+        msg = f'Outcome:\n{outcome}\ndid not match expected outcome:\n{expected_outcome}\n when i = {i}\nn = {b.n}'
+        assert expected_outcome == outcome, msg
+
+        ### any value inserted at i should also be valid
+        expected_outcome = True
+
+        # insert a number (3 for no real reason)
+        b.update_cell(i, 3)
+
+        outcome = b.is_index_valid(i)
+
+        msg = f'Outcome:\n{outcome}\ndid not match expected outcome:\n{expected_outcome}\n when i = {i}\nn = {b.n}'
+        assert expected_outcome == outcome, msg
+
+        # TODO you might want to add a third assert where expected outcome = False
+
+    # if the for loop raises no assert errors, the test passes
+    done("Board.is_index_valid should return the correct bool")
+unit_tests["Board.is_index_valid should return the correct bool"] = test6
+
 '''
 # example tests
 def one_plus_one_is_two(done):
