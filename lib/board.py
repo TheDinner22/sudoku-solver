@@ -53,7 +53,7 @@ class Board:
             
     def update_cell(self, cell_index, value):
         if cell_index in self.mutable_indices:
-            self.grid[cell_index] = int(value) # TODO is the 'int' really needed here??
+            self.grid[cell_index] = value
         else:
             print("cannot update immutable cell: ", cell_index)
 
@@ -97,6 +97,10 @@ class Board:
 
             set_l = list(set(l))
 
+            # sort both lists # TODO this needs to be changed later
+            set_l.sort()
+            l.sort()
+
             if l != set_l:
                 return False
 
@@ -107,15 +111,24 @@ class Board:
 if __name__ == "__main__":
     g = Board(print_test_grid=True)#,n=2)
 
+    my_sb = [
+    2,0,0,4,0,3,0,6,0,  
+    0,0,0,2,0,0,0,0,3,  
+    0,0,5,1,0,6,0,0,0, 
+    1,7,8,0,0,0,9,0,5,  
+    0,0,0,0,0,0,0,0,0,  
+    9,0,3,0,0,0,1,7,6,  
+    0,0,0,3,0,1,5,0,0,
+    7,0,0,0,0,2,0,0,0,
+    0,6,0,5,0,8,0,0,0
+]
     #print(g.return_row_of_index(44))
 
     #print(g.return_col_of_index(52))
 
-    g.update_board(g.grid)
+    g.update_board(my_sb)
 
     g.pretty_print_grid()
-
-    print(g.mutable_indices)
 
     #print(g.return_nxn_grid_of_index(9))
 
