@@ -1,5 +1,4 @@
-# dependencies
-import sys
+# TODO remove sys 
 
 # whole grid
 class Board:
@@ -21,11 +20,11 @@ class Board:
                 self.mutable_indices.append(i)
                 self.grid.append(0)
 
-    def pretty_print_grid(self): # TODO remove the need for sys in this and all other files
+    def pretty_print_grid(self):
         for i in range(1,len(self.grid)+1):
             cell = self.grid[i-1]
             if i-1 in self.mutable_indices:
-                sys.stdout.write(str(cell))
+                print(cell, end="")
             else:
                 print('\033[91m'+str(cell)+'\033[0m', end="")
             self._spacer(cell)
@@ -37,9 +36,9 @@ class Board:
         msg = str(msg)
         msg_len = len(msg)
         if msg_len == 1:
-            sys.stdout.write("  ")
+            print("  ", end="")
         elif msg_len == 2:
-            sys.stdout.write(" ")
+            print(" ", end="")
 
     def update_board(self, board_list):
         # update the grid
