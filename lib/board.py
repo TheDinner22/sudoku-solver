@@ -21,10 +21,13 @@ class Board:
                 self.mutable_indices.append(i)
                 self.grid.append(0)
 
-    def pretty_print_grid(self):
+    def pretty_print_grid(self): # TODO remove the need for sys in this and all other files
         for i in range(1,len(self.grid)+1):
             cell = self.grid[i-1]
-            sys.stdout.write(str(cell))
+            if i-1 in self.mutable_indices:
+                sys.stdout.write(str(cell))
+            else:
+                print('\033[91m'+str(cell)+'\033[0m', end="")
             self._spacer(cell)
             if (i % self.width) == 0:
                 print()
@@ -109,32 +112,113 @@ class Board:
         # return true if for loop runs
         return True
 
+    def solve_board(self):
+        '''solve da puzzle!'''
+        current_mutable_i = 0
+        while current_mutable_i < len(self.mutable_indices):
+            current_board_i = self.mutable_indices[current_mutable_i]
+            cell_value = self.grid[current_board_i]
+
+            # if the cell is valid and not 0, increment
+            if self.is_index_valid(current_board_i) and cell_value != 0:
+                current_mutable_i += 1
+
+            # other wise, increment/backtrack
+            else:
+                new_value = cell_value + 1 if cell_value + 1 <= 9 else 0
+                self.update_cell(current_board_i, new_value)
+
+                # if the increment was 0 back track as much as needed
+                if not new_value:
+                    back_tracking = True
+                    while back_tracking:
+                        # move to the previous mutable cell
+                        current_mutable_i -= 1
+                        current_board_i = self.mutable_indices[current_mutable_i]
+                        
+                        # get and update cell value
+                        cell_value = self.grid[current_board_i]
+                        new_value = cell_value + 1 if cell_value + 1 <= 9 else 0
+                        self.update_cell(current_board_i, new_value)
+
+                        # check to see if back tracking is still needed
+                        if new_value:
+                            # stop back track
+                            back_tracking = False
+
 
 if __name__ == "__main__":
-    g = Board(print_test_grid=True)#,n=2)
+    # simple
+    simple = [
+        0,0,0,4,0,3,0,6,0,
+        0,0,0,2,0,0,0,0,3,
+        0,0,5,1,0,6,0,0,0,
+        1,7,8,0,0,0,9,0,5,
+        0,0,0,0,0,0,0,0,0,
+        9,0,3,0,0,0,1,7,6,
+        0,0,0,3,0,1,5,0,0,
+        7,0,0,0,0,2,0,0,0,
+        0,6,0,5,0,8,0,0,0
+    ]
 
-    my_sb = [
-    2,3,5,1,7,8,6,9,9,
-    7,5,6,0,0,3,0,8,5,
-    0,0,1,0,2,0,0,0,0,
-    0,0,0,5,0,7,0,0,0,
-    0,0,4,0,0,0,1,0,0,
-    0,9,0,0,0,0,0,0,0,
-    5,0,0,0,0,0,0,7,3,
-    0,0,2,0,1,0,0,0,0,
-    0,0,0,0,4,0,0,0,9
-]
-    #print(g.return_row_of_index(44))
+    # easy
+    easy = [
+        0,0,1,6,0,2,0,0,0,
+        0,9,0,8,0,0,0,0,0,
+        0,0,6,4,0,0,0,7,0,
+        0,0,5,0,4,0,2,0,3,
+        2,1,9,5,3,6,7,4,8,
+        0,0,0,0,8,1,9,0,6,
+        0,7,0,0,0,0,6,0,0,
+        0,0,0,0,0,4,0,3,0,
+        0,0,0,3,0,5,4,0,0
+    ]
 
-    #print(g.return_col_of_index(52))
+    # medium
+    medium = [
+        1,5,7,6,4,0,0,9,8,
+        2,0,9,0,0,0,0,0,0,
+        0,0,0,9,1,0,0,0,4,
+        8,0,0,4,3,0,0,5,0,
+        0,0,0,0,0,0,0,0,0,
+        0,2,0,0,6,8,0,0,7,
+        7,0,0,0,8,6,0,0,0,
+        0,0,0,0,0,0,0,0,1,
+        0,9,0,0,0,4,8,6,2
+    ]
 
-    g.update_board(my_sb)
+    # hard
+    hard = [
+        6,0,0,0,0,0,0,0,8,
+        0,4,0,9,0,2,0,3,0,
+        0,0,3,0,1,0,4,0,0,
+        0,2,0,6,0,5,0,8,0,
+        0,0,5,0,0,0,7,0,0,
+        0,1,0,7,0,9,0,2,0,
+        0,0,4,0,9,0,1,0,0,
+        0,3,0,5,0,8,0,6,0,
+        7,0,0,0,0,0,0,0,0
+    ]
+
+    # really hard (this was made to counter back tracking and takes 1-2 hours to solve)
+    rh = [
+        0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,3,0,8,5,
+        0,0,1,0,2,0,0,0,0,
+        0,0,0,5,0,7,0,0,0,
+        0,0,4,0,0,0,1,0,0,
+        0,9,0,0,0,0,0,0,0,
+        5,0,0,0,0,0,0,7,3,
+        0,0,2,0,1,0,0,0,0,
+        0,0,0,0,4,0,0,0,9
+    ]
+    g = Board()
+
+    g.update_board(hard)
+
+    g.solve_board()
 
     g.pretty_print_grid()
-
-    print(g.is_index_valid(11))
-
-    #print(g.return_nxn_grid_of_index(11))
 
 '''
 ml= [
