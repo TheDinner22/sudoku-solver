@@ -91,7 +91,9 @@ class Board:
         lists = [row_list, col_list, subgrid_list]
 
         # loop through all of these checking for repeat elements in the lists
-        for l in lists:
+        for i in range(len(lists)):
+            l = lists[i]
+
             # remove all 0's
             l = list(filter((0).__ne__, l))
 
@@ -112,15 +114,15 @@ if __name__ == "__main__":
     g = Board(print_test_grid=True)#,n=2)
 
     my_sb = [
-    2,0,0,4,0,3,0,6,0,  
-    0,0,0,2,0,0,0,0,3,  
-    0,0,5,1,0,6,0,0,0, 
-    1,7,8,0,0,0,9,0,5,  
-    0,0,0,0,0,0,0,0,0,  
-    9,0,3,0,0,0,1,7,6,  
-    0,0,0,3,0,1,5,0,0,
-    7,0,0,0,0,2,0,0,0,
-    0,6,0,5,0,8,0,0,0
+    2,3,5,1,7,8,6,9,9,
+    7,5,6,0,0,3,0,8,5,
+    0,0,1,0,2,0,0,0,0,
+    0,0,0,5,0,7,0,0,0,
+    0,0,4,0,0,0,1,0,0,
+    0,9,0,0,0,0,0,0,0,
+    5,0,0,0,0,0,0,7,3,
+    0,0,2,0,1,0,0,0,0,
+    0,0,0,0,4,0,0,0,9
 ]
     #print(g.return_row_of_index(44))
 
@@ -130,7 +132,9 @@ if __name__ == "__main__":
 
     g.pretty_print_grid()
 
-    #print(g.return_nxn_grid_of_index(9))
+    print(g.is_index_valid(11))
+
+    #print(g.return_nxn_grid_of_index(11))
 
 '''
 ml= [

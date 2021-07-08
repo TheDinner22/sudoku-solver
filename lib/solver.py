@@ -40,7 +40,8 @@ def solve_board(sb):
                     current_i = sb.mutable_indices[sb.mutable_indices.index(current_i) -1]
 
                     # increment the new current_i by one, unless it is 9 in which case back track twice (or 3, 4, 5, etc times)
-                    while back_tracking:
+                    while back_tracking or not sb.is_index_valid(current_i):
+                        back_tracking = True
                         cell_value = sb.grid[current_i]
                         if cell_value == 9:
                             # reset this cell to 0
@@ -54,27 +55,32 @@ def solve_board(sb):
                             new_value = cell_value + 1
                             sb.update_cell(current_i, new_value)
                             back_tracking = False
+
+                    # move current_i forward one so it does not loop over the previous cell 
+                    current_i = sb.mutable_indices[sb.mutable_indices.index(current_i) +1]
+                    
         else:
             current_i += 1
+
 
 if __name__ == "__main__":
     b = Board()
 
-    # simple
-    simple = [
-        0,0,0,4,0,3,0,6,0,
-        0,0,0,2,0,0,0,0,3,
-        0,0,5,1,0,6,0,0,0,
-        1,7,8,0,0,0,9,0,5,
+    # really hard
+    rh = [
         0,0,0,0,0,0,0,0,0,
-        9,0,3,0,0,0,1,7,6,
-        0,0,0,3,0,1,5,0,0,
-        7,0,0,0,0,2,0,0,0,
-        0,6,0,5,0,8,0,0,0
+        0,0,0,0,0,3,0,8,5,
+        0,0,1,0,2,0,0,0,0,
+        0,0,0,5,0,7,0,0,0,
+        0,0,4,0,0,0,1,0,0,
+        0,9,0,0,0,0,0,0,0,
+        5,0,0,0,0,0,0,7,3,
+        0,0,2,0,1,0,0,0,0,
+        0,0,0,0,4,0,0,0,9
     ]
 
-    b.update_board(simple)
+    b.update_board(rh)
 
     solve_board(b)
 
-    b.pretty_print_grid()
+    #b.pretty_print_grid()
