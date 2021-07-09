@@ -6,10 +6,17 @@ sys.path.append(BASE_PATH)
 
 from lib.board import Board
 
-# TODO get some scafolding going
+# init pygame
+pygame.init()
 
 class Window:
     def __init__(self):
+        # define all const colors
+        self.colors = {
+            "WHITE" : (255, 255, 255)
+        }
+
+        # create sudoku board
         self.sb = Board()
 
         # TODO make a create sudoku method on board later, 
@@ -28,11 +35,47 @@ class Window:
         self.sb.update_board(hard)
     
     # create window
+    def create_window(self):
+        # window values
+        self.WIN_WIDTH = 900
+        self.WIN_HEIGHT = 500
 
-    # create rectangles
+        # create and name window
+        self.WIN = pygame.display.set_mode( (self.WIN_WIDTH, self.WIN_HEIGHT) )
+        pygame.display.set_caption("Sudoku Solver")
 
-    # draw
+    def destroy_window(self):
+        pygame.quit()
+
+    # create rectangles/lines for board
+
+    # draw window
+    def draw_window(self):
+        # set bg to white
+        self.WIN.fill(self.colors["WHITE"])
+
+        # update window
+        pygame.display.update()
 
     # main loop
+    def main_loop(self):
+        self.running = True
+        while self.running:
+            # event loop
+            for event in pygame.event.get():
+                # QUIT event
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    self.destroy_window()
 
-    # color decider NOTE maybe not needed
+            # draw/update the window
+            self.draw_window()
+
+    def main(self):
+        self.create_window()
+
+        self.main_loop()
+
+if __name__ == "__main__":
+    w = Window()
+    w.main()
