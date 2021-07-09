@@ -1,10 +1,10 @@
-# TODO remove sys 
-
 # whole grid
 class Board:
-    def __init__(self, n=3, print_test_grid=False):
+    def __init__(self, n=3, print_test_grid=False, callback=False):
+        self.callback = callback
+
         self.n = int(n)
-        self.print_test_grid = print_test_grid # TODO remove me
+        self.print_test_grid = print_test_grid
         self.width = n * n
         self.height = self.width # this is to make things more human readable 
         self.grid = []
@@ -53,9 +53,12 @@ class Board:
                 if not cell:
                     self.mutable_indices.append(i)
             
-    def update_cell(self, cell_index, value):
+    def update_cell(self, cell_index, value, furthest_i=False):
         if cell_index in self.mutable_indices:
             self.grid[cell_index] = value
+
+            if self.callback != False:
+                self.callback(make_zeros_red=True,furthest_i=furthest_i)
         else:
             print("cannot update immutable cell: ", cell_index)
 
@@ -113,10 +116,16 @@ class Board:
 
     def solve_board(self):
         '''solve da puzzle!'''
+        # this is for pygame
+        furthest_i = 0
+
         current_mutable_i = 0
         while current_mutable_i < len(self.mutable_indices):
             current_board_i = self.mutable_indices[current_mutable_i]
             cell_value = self.grid[current_board_i]
+
+            if current_board_i > furthest_i:
+                furthest_i = current_board_i
 
             # if the cell is valid and not 0, increment
             if self.is_index_valid(current_board_i) and cell_value != 0:
@@ -125,7 +134,7 @@ class Board:
             # other wise, increment/backtrack
             else:
                 new_value = cell_value + 1 if cell_value + 1 <= 9 else 0
-                self.update_cell(current_board_i, new_value)
+                self.update_cell(current_board_i, new_value,furthest_i=furthest_i)
 
                 # if the increment was 0 back track as much as needed
                 if not new_value:
@@ -138,7 +147,7 @@ class Board:
                         # get and update cell value
                         cell_value = self.grid[current_board_i]
                         new_value = cell_value + 1 if cell_value + 1 <= 9 else 0
-                        self.update_cell(current_board_i, new_value)
+                        self.update_cell(current_board_i, new_value, furthest_i=furthest_i)
 
                         # check to see if back tracking is still needed
                         if new_value:
