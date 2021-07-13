@@ -1,7 +1,7 @@
 # NOTE this also sort of turned into the game/game logic
 
 # dependencies
-import os, sys, pygame
+import os, sys, pygame, time
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # adds project dir to places it looks for the modules
 sys.path.append(BASE_PATH)
@@ -18,6 +18,7 @@ class Window:
             "WHITE" : (255, 255, 255),
             "BLACK" : (0, 0, 0),
             "RED" : (255, 0, 0),
+            "GREEN" : (0, 255, 0),
             "CYAN" : (11, 247, 255)
         }
 
@@ -37,7 +38,8 @@ class Window:
         self.add_allowed_events()
 
         # define all fonts
-        self.NUM_FONT = pygame.font.SysFont("comicsans", 90) # NOTE here '50' is the font size
+        self.NUM_FONT = pygame.font.SysFont("comicsans", 90) # NOTE here '90' is the font size
+        self.RESULT_FONT = pygame.font.SysFont("comicsans", 150)
 
         # create sudoku board
         self.sb = Board(callback=self.draw_window)
@@ -125,6 +127,27 @@ class Window:
             # blit text to screen
             self.WIN.blit(cell_text, (width, height) )
 
+    def display_result(self, wrong):
+        # create the text
+        if wrong:
+            result_text = self.RESULT_FONT.render("WRONG", 1, self.colors["RED"])
+        else:
+            result_text = self.RESULT_FONT.render("CORRECT", 1, self.colors["GREEN"])
+
+
+        # width and height
+        width = 270
+        height = 280
+
+        # blit to screen
+        self.WIN.blit(result_text, (width, height) )
+
+        # NOTE this is bad practice but I dont care
+
+        # update the screen and wait 5 seconds
+        pygame.display.update()
+        time.sleep(5)
+
     # draw window
     def draw_window(self, make_zeros_red=False, furthest_i=False):
         # set bg to white
@@ -138,6 +161,42 @@ class Window:
 
         # update window
         pygame.display.update()
+
+    def check_puzzle(self):
+        # compare the current grid to a solved grid
+        before_grid = self.sb.grid.copy()
+        
+        # set the callback to false and solve #TODO i may need to reset callback after this 
+        self.sb.callback = False
+
+        # remove events to stop 'not responding message'
+        self.remove_all_events()
+
+        # solve
+        self.sb.solve_board()
+
+        # add events back when done
+        self.add_allowed_events()
+
+        # reset the callback
+        self.sb.callback = self.draw_window
+        
+        # ge the solved grid
+        solved_grid = self.sb.grid.copy()
+        
+        # reset the sb
+        for i in range(len(self.sb.grid)):
+            if i in self.sb.mutable_indices:
+                self.sb.grid[i] = 0
+        
+        self.sb.update_board(self.sb.grid) 
+
+
+        # if the grids changed the board was wrong otherwise it was solved correctly
+        if solved_grid != before_grid:
+            self.display_result(True)
+        else:
+            self.display_result(False)
 
     # main loop
     def main_loop(self):
@@ -182,6 +241,9 @@ class Window:
                         # add events back when done
                         self.add_allowed_events()
 
+                        # set solving to false
+                        self.solving = False                        
+
                     elif event.key == pygame.K_v:
                         # set solving to true
                         self.solving = True
@@ -194,6 +256,12 @@ class Window:
 
                         # add events back when done
                         self.add_allowed_events()
+
+                        # set solving to false
+                        self.solving = False
+
+                    elif event.key == pygame.K_c:
+                        self.check_puzzle()
 
                     elif event.key == pygame.K_DOWN:
                         self.selector_y = self.selector_y + 1 if self.selector_y +1 <= self.sb.width -1 else self.sb.width -1 
