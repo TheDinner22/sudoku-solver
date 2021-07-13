@@ -1,3 +1,5 @@
+# NOTE this also sort of turned into the game/game logic
+
 # dependencies
 import os, sys, pygame
 
@@ -15,8 +17,16 @@ class Window:
         self.colors = {
             "WHITE" : (255, 255, 255),
             "BLACK" : (0, 0, 0),
-            "RED" : (255, 0, 0)
+            "RED" : (255, 0, 0),
+            "CYAN" : (11, 247, 255)
         }
+
+        # is the board being solved?
+        self.solving = False
+
+        # selector position
+        self.selector_x = 0
+        self.selector_y = 0
 
         # load all images
         bg_filepath = os.path.join(".data", os.path.join("images","blank_board.png"))
@@ -68,6 +78,29 @@ class Window:
     def destroy_window(self):
         pygame.quit()
 
+    # draw the selection rectangle (if needed)
+    def draw_selector(self):
+        # only draw it if we are not solving
+        if not self.solving:
+            # determine rectangle position
+            width = 90
+            height = 65
+
+            initial_x = 13
+            initial_y = 13
+
+            x_interval = 97
+            y_interval = 70
+
+            x = initial_x + (x_interval * self.selector_x)
+            y = initial_y + (y_interval * self.selector_y)
+
+            # define the rectangle
+            selector = pygame.Rect(x, y, width, height) # x, y, width, height
+
+            # draw the rectangle
+            pygame.draw.rect(self.WIN, self.colors["CYAN"], selector)
+
     # display boards numbers
     def display_numbers(self, make_zeros_red=False, furthest_i=False):
         # vars to help with text placement on WIN
@@ -97,6 +130,9 @@ class Window:
         # set bg to white
         self.WIN.blit(self.BG_IMG, (0, 0) )
 
+        # draw the selector
+        self.draw_selector()
+
         # draw the boards numbers to the grid
         self.display_numbers(make_zeros_red=make_zeros_red, furthest_i=furthest_i)
 
@@ -115,8 +151,26 @@ class Window:
 
                 # KEYDOWN event
                 if event.type == pygame.KEYDOWN:
+                    # define a keys list (for bulk key press checking)
+                    keys = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]
+                    if event.key in keys:
+                        # what number was pressed?
+                        number_pressed = keys.index(event.key)
+                        
+                        # find cells index
+                        horizontal_value = self.selector_x
+                        vertical_value = self.selector_y * self.sb.width
+
+                        i = horizontal_value + vertical_value
+
+                        # update cell
+                        self.sb.update_cell(i, number_pressed) 
+
                     # space bar means quick solve
-                    if event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_SPACE:
+                        # set solving to true
+                        self.solving = True
+
                         # set the callback to false and solve
                         self.sb.callback = False
 
@@ -129,6 +183,9 @@ class Window:
                         self.add_allowed_events()
 
                     elif event.key == pygame.K_v:
+                        # set solving to true
+                        self.solving = True
+
                         # remove events to stop 'not responding message'
                         self.remove_all_events()
 
@@ -138,6 +195,18 @@ class Window:
                         # add events back when done
                         self.add_allowed_events()
 
+                    elif event.key == pygame.K_DOWN:
+                        self.selector_y = self.selector_y + 1 if self.selector_y +1 <= self.sb.width -1 else self.sb.width -1 
+                    
+                    elif event.key == pygame.K_UP:
+                        self.selector_y = self.selector_y - 1 if self.selector_y -1 >= 0 else 0 
+                        
+                    elif event.key == pygame.K_RIGHT:
+                        self.selector_x = self.selector_x +1 if self.selector_x +1 <= self.sb.width -1 else self.sb.width -1
+                    
+                    elif event.key == pygame.K_LEFT:
+                        self.selector_x = self.selector_x -1 if self.selector_x -1 >= 0 else 0
+                
             # draw/update the window
             self.draw_window()
 
